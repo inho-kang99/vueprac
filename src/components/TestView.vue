@@ -74,15 +74,17 @@ const stoneObj = {
 }
 
 const SetStone = (location) => {
-  const docRef = doc(db, 'vue', 'test')
-  const lastStone = store.boardArr[store.boardArr.length - 1]
-  updateDoc(docRef, {
-    board: arrayUnion({
-      location,
-      side: lastStone?.side === 'B' ? 'W' : 'B',
-      order: store.boardArr.length + 1
+  if (!store.boardCells[location]) {
+    const docRef = doc(db, 'vue', 'test')
+    const lastStone = store.boardArr[store.boardArr.length - 1]
+    updateDoc(docRef, {
+      board: arrayUnion({
+        location,
+        side: lastStone?.side === 'B' ? 'W' : 'B',
+        order: store.boardArr.length + 1
+      })
     })
-  })
+  }
 }
 
 onMounted(() => {
