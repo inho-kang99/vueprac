@@ -70,7 +70,9 @@ export const BoardCell = styled('div')`
   /* box-sizing: border-box; */
   cursor: pointer;
   border: 1px solid #fff;
-
+  background-color: ${({ last }) => {
+    return last && 'rgba(255, 255, 255, 0.5)'
+  }};
   &:hover {
     background-color: rgba(255, 255, 255, 0.5);
   }

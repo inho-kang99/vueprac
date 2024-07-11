@@ -61,6 +61,7 @@ const ClearChat = () => {
     message: []
   })
 }
+
 const ClearBoard = () => {
   const docRef = doc(db, 'vue', 'test')
   updateDoc(docRef, {
@@ -226,6 +227,10 @@ const winSide = computed(() => {
 })
 </script>
 
+<!-- computed => store.$state << 접근해야 반응형 접근 -->
+<!-- script 에서는 ref.value 접근 -->
+<!-- template 에서는 ref 접근 -->
+
 <template>
   <Wrap>
     <MessageWrap>
@@ -252,6 +257,7 @@ const winSide = computed(() => {
       <BoardCell
         v-for="(item, index) in store.keys"
         v-bind:key="item & index"
+        :last="store.boardArr[store.boardArr.length - 1]?.location === item"
         @click="SetStone(item)"
       >
         <BoardStone
