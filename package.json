@@ -15,7 +15,10 @@
     "firebase": "^10.12.3",
     "pinia": "^2.1.7",
     "vue": "^3.4.29",
-    "vue-router": "^4.3.3"
+    "vue-router": "^4.3.3",
+    "vue-styled-components": "1.6.0",
+    "vue3-styled-components": "1.2.1",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",
