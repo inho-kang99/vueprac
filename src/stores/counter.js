@@ -5,10 +5,7 @@ import { boardObj } from '@/common/CommonBoard'
 export const useCounterStore = defineStore('counter', {
   state: () => {
     return {
-      count: 0,
-      isAdmin: true,
       message: [],
-      hasChanged: true,
       board: boardObj,
       keys: Object.keys(boardObj),
       boardArr: [],
@@ -30,7 +27,7 @@ export const useCounterStore = defineStore('counter', {
           RT: false
         }
       })
-      return checkCells
+      return state.boardCells
     }
   },
   actions: {

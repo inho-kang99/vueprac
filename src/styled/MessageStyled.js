@@ -59,6 +59,7 @@ export const BoardWrap = styled('div')`
   display: flex;
   flex-wrap: wrap;
   box-sizing: border-box;
+  position: relative;
 `
 export const BoardCell = styled('div')`
   width: 5%;
@@ -82,4 +83,14 @@ export const BoardStone = styled('div')`
   border: 1px solid #fff;
   /* background-color: #fff; */
   background-color: ${({ color }) => color};
+`
+
+export const CoverWrap = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
 `

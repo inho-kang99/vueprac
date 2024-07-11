@@ -2,12 +2,13 @@
 import { arrayUnion, doc, onSnapshot, setDoc, updateDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 import { useCounterStore } from '../stores/counter'
-import { onUnmounted, onMounted, ref } from 'vue'
+import { onUnmounted, onMounted, ref, computed } from 'vue'
 import {
   BoardCell,
   BoardStone,
   BoardWrap,
   ClearButton,
+  CoverWrap,
   MessageContainer,
   MessageInput,
   MessageInputBox,
@@ -93,7 +94,134 @@ onUnmounted(() => {
     unsubscribe()
   }
 })
-console.log(store.win)
+
+const winSide = computed(() => {
+  const checkCells = {}
+  const board = store.$state.boardCells
+  const filter = store.keys.filter((i) => board[i])
+
+  filter.forEach((i) => {
+    checkCells[i] = {
+      R: false,
+      B: false,
+      RB: false,
+      RT: false
+    }
+  })
+
+  for (let i = 0; i < filter.length; i++) {
+    const cell = board[filter[i]]
+    let RArr = [cell.location]
+    let BArr = [cell.location]
+    let RBArr = [cell.location]
+    let RTArr = [cell.location]
+    if (cell) {
+      // 가로
+      const side = cell?.side
+      let count = 1
+      let [cellRow, cellColumn] = cell.location.split('x')
+      let row = Number(cellRow)
+      let column = Number(cellColumn) + 1
+      if (!checkCells[cell?.location].R) {
+        while (board[`${row}x${Number(column)}`]) {
+          const rightCell = board[`${row}x${Number(column)}`]
+          if (rightCell?.side === side) {
+            RArr.push(`${row}x${Number(column)}`)
+            count += 1
+            column += 1
+          } else {
+            break
+          }
+        }
+        if (count > 5) {
+          RArr.forEach((j) => {
+            checkCells[j].R = true
+          })
+        }
+        if (count === 5) {
+          return side
+        }
+      }
+      // 세로
+      if (!checkCells[cell?.location].B) {
+        row = Number(cellRow) + 1
+        column = Number(cellColumn)
+        count = 1
+        while (board[`${row}x${Number(column)}`]) {
+          const rightCell = board[`${Number(row)}x${Number(column)}`]
+          if (rightCell?.side === side) {
+            BArr.push(`${row}x${Number(column)}`)
+            count += 1
+            row += 1
+          } else {
+            break
+          }
+        }
+        if (count > 5) {
+          BArr.forEach((j) => {
+            checkCells[j].B = true
+          })
+        }
+        if (count === 5) {
+          return side
+        }
+      }
+
+      // 우하향 대각선
+      if (!checkCells[cell?.location].RB) {
+        row = Number(cellRow) + 1
+        column = Number(cellColumn) + 1
+        count = 1
+        while (board[`${row}x${Number(column)}`]) {
+          const rightCell = board[`${Number(row)}x${Number(column)}`]
+          if (rightCell?.side === side) {
+            RBArr.push(`${row}x${Number(column)}`)
+            count += 1
+            row += 1
+            column += 1
+          } else {
+            break
+          }
+        }
+        if (count > 5) {
+          RBArr.forEach((j) => {
+            checkCells[j].RB = true
+          })
+        }
+        if (count === 5) {
+          return side
+        }
+      }
+      // 좌하향 대각선
+      if (!checkCells[cell?.location].RT) {
+        row = Number(cellRow) + 1
+        column = Number(cellColumn) - 1
+        count = 1
+        while (board[`${row}x${Number(column)}`]) {
+          const rightCell = board[`${Number(row)}x${Number(column)}`]
+          if (rightCell?.side === side) {
+            RTArr.push(`${row}x${Number(column)}`)
+            count += 1
+            row += 1
+            column -= 1
+          } else {
+            break
+          }
+        }
+        if (count > 5) {
+          RTArr.forEach((j) => {
+            checkCells[j].RT = true
+          })
+        }
+        if (count === 5) {
+          return side
+        }
+      }
+    }
+  }
+
+  return null
+})
 </script>
 
 <template>
@@ -116,6 +244,9 @@ console.log(store.win)
     </MessageWrap>
 
     <BoardWrap>
+      <CoverWrap v-if="winSide">
+        <ClearButton @click="ClearBoard">초기화</ClearButton>
+      </CoverWrap>
       <BoardCell
         v-for="(item, index) in store.keys"
         v-bind:key="item & index"
